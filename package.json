@@ -14,9 +14,9 @@
     "url": "https://github.com/Lushenggang/vue-overflow-ellipsis"
   },
   "license": "MIT",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "unpkg": "dist/index.js",
+  "main": "dist/vue-overflow-ellipsis.common.js",
+  "module": "dist/vue-overflow-ellipsis.esm.js",
+  "unpkg": "dist/vue-overflow-ellipsis.min.js",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
