@@ -1,13 +1,31 @@
 {
-  "name": "vue-overlow-ellipsis",
-  "version": "0.1.0",
-  "private": true,
+  "name": "vue-overflow-ellipsis",
+  "version": "0.9.0",
+  "description": "Vue组件，多行文字溢出省略折叠，...[查看更多]",
+  "keywords": [
+    "多行溢出",
+    "省略多余内容",
+    "折叠",
+    "展开"
+  ],
+  "author": "Mumaa <lushg@foxmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lushenggang/vue-overflow-ellipsis"
+  },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "unpkg": "dist/index.js",
+  "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build --target lib --name vue-overflow-ellipsis ./src/index.js",
+    "prepublishOnly": "git push && npm run build"
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "element-resize-detector": "^1.2.1",
     "vue": "^2.6.11"
   },
   "devDependencies": {

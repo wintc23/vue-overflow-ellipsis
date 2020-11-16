@@ -1,27 +1,30 @@
 <template>
   <div class="ellipsis-container">
     <div class="shadow">
-      <textarea :rows="rows"></textarea>
-      <div class="real-box" ref="box">
-        {{ showContent }}{{ ellipsisText }}
-        <span class="ellipsis-btn" @click="clickBtn">
-          <slot name="btn">{{ btnText }}</slot>
-        </span>
+      <textarea :rows="rows" readonly></textarea>
+      <div class="shadow-box" ref="box">
+        {{ showContent }}
+        <slot name="ellipsis">
+          {{ ellipsisText }}
+          <span class="ellipsis-btn">{{ btnText }}</span>
+        </slot>
         <span ref="tail"></span>
       </div>
     </div>
     <div class="real-box">
-      {{ showContent }}{{ ellipsisText }}
-      <template v-if="textLength < content.length || btnShow">
-        <span class="ellipsis-btn" @click="clickBtn">
-          <slot name="btn">{{ btnText }}</slot>
-        </span>
-      </template>
+      {{ showContent }}
+      <slot name="ellipsis" v-if="(textLength < content.length) || btnShow">
+        {{ ellipsisText }}
+        <span class="ellipsis-btn" @click="clickBtn">{{ btnText }}</span>
+      </slot>
     </div>
   </div>
 </template>
 
 <script>
+import resizeObserver from 'element-resize-detector'
+const observer = resizeObserver()
+
 export default {
   props: {
     content: {
@@ -43,66 +46,58 @@ export default {
     btnShow: {
       type: Boolean,
       default: false
-    }
+    },
   },
   data () {
     return {
       textLength: 0,
-      loading: false
+      beforeRefresh: null
     }
   },
   computed: {
     showContent () {
-      const length = this.loading ? this.content.length : this.textLength
+      const length = this.beforeRefresh ? this.content.length : this.textLength
       return this.content.substr(0, this.textLength)
     },
-    boxList () {
-      return [
-        {
-          class: 'shadow-box',
-          content: this.content.substr(0, this.textLength),
-        },
-        {
-          class: 'real-box',
-          content: this.content.substr(0, this.textLength)
-        }
-      ]
+    watchData () {
+      return [this.content, this.btnText, this.ellipsisText, this.rows, this.btnShow]
+    }
+  },
+  watch: {
+    watchData: {
+      immediate: true,
+      handler () {
+        this.refresh()
+      }
     },
   },
   mounted () {
-    this.refresh()
-    window.addEventListener('resize', this.refresh)
+    observer.listenTo(this.$refs.box, () => this.refresh())
   },
   beforeDestroy () {
-    window.removeEventListener('resize', this.refresh)
+    observer.uninstall(this.$refs.box)
   },
   methods: {
     refresh () {
-      if (this.loading) return
-      this.textLength = 0
-      this.loading = true
-      console.time('refresh')
-      const loop = () => {
-        const rect = this.$refs.tail.getBoundingClientRect()
-        const elRect = this.$refs.box.getBoundingClientRect()
-        if (rect.top >= elRect.bottom) {
-          console.timeEnd('refresh')
-          this.textLength -= 1
-          this.loading = false
-          return
-        }
-        if (this.textLength >= this.content.length) {
-          this.loading = false
-          return
-        }
-        this.textLength++
-        this.$nextTick(loop)
+      this.beforeRefresh && this.beforeRefresh()
+      let stopLoop = false
+      this.beforeRefresh = () => stopLoop = true
+      this.textLength = this.content.length
+      const checkLoop = (start, end) => {
+        if (stopLoop || start + 1 >= end) return
+        const boxRect = this.$refs.box.getBoundingClientRect()
+        const tailRect = this.$refs.tail.getBoundingClientRect()
+        const overflow = tailRect.bottom > boxRect.bottom
+        overflow ? (end = this.textLength) : (start = this.textLength)
+        this.textLength = Math.floor((start + end) / 2)
+        this.$nextTick(() => checkLoop(start, end))
       }
-      this.$nextTick(loop)
+      this.$nextTick(() => checkLoop(0, this.textLength))
+
     },
     clickBtn (event) {
       this.$emit('click-btn', event)
-    }
+    },
   }
 }
 </script>
@@ -112,12 +107,14 @@ export default {
   text-align left
   position relative
   line-height 1.5
-  font-size 24px
-  border 1px solid red
   .shadow
+    float left
+    width 100%
     display flex
-    opacity 0
     pointer-events none
+    opacity 0
+    user-select none
+    position absolute
     textarea
       border none
       flex auto
@@ -127,11 +124,14 @@ export default {
       font-size inherit
       line-height inherit
       outline none
-  .real-box, .shadow-box
-    position absolute
-    overflow hidden
-    left 0
-    right 0
-    top 0
-    bottom 0
+    .shadow-box
+      position absolute
+      left 0
+      right 0
+      top 0
+      bottom 0
+  .ellipsis-btn
+    cursor pointer
+    text-decoration underline
+    color #4791ff
 </style>
