@@ -1,3 +1,3 @@
-import ellipsis from '@/comments/ellipsis'
+import ellipsis from '@/components/ellipsis'
 
 export default ellipsis
