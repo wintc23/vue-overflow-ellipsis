@@ -14,13 +14,11 @@
     "url": "https://github.com/Lushenggang/vue-overflow-ellipsis"
   },
   "license": "MIT",
-  "main": "dist/vue-overflow-ellipsis.common.js",
-  "module": "dist/vue-overflow-ellipsis.esm.js",
-  "unpkg": "dist/vue-overflow-ellipsis.min.js",
+  "main": "dist/index.common.js",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --target lib --name vue-overflow-ellipsis ./src/index.js",
+    "build": "vue-cli-service build --target lib --name index ./src/index.js",
     "prepublishOnly": "git push && npm run build"
   },
   "dependencies": {
