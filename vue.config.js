@@ -1,12 +1,14 @@
 
 const UglifyJsPlugin=require('uglifyjs-webpack-plugin')
+const isDev = process.env.NODE_ENV !== "production"
+
+const externals = {}
+!isDev && (externals.vue = 'vue')
 
 module.exports = {
   productionSourceMap: false,
   configureWebpack: {
-    externals: {
-      vue: "vue"
-    },
+    externals,
     optimization: {
       minimizer: [
         new UglifyJsPlugin({

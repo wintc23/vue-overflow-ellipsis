@@ -58,6 +58,8 @@ export default {
 
 - slot
   - ellipsis 自定义省略号和按钮文字，`<span slot="ellipsis">... 查看全部</span>`
+- events
+  - click-btn 展开按钮点击事件
 
 
 ---
