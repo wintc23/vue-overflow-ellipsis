@@ -1,6 +1,6 @@
 {
   "name": "vue-overflow-ellipsis",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Vue组件，多行文字溢出省略折叠，...[查看更多]",
   "keywords": [
     "多行溢出",
