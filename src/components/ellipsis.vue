@@ -1,5 +1,5 @@
 <template>
-  <div class="ellipsis-container">
+  <div class="mm-ellipsis-container">
     <div class="shadow">
       <textarea :rows="rows" readonly></textarea>
       <div class="shadow-box" ref="box">
@@ -51,7 +51,9 @@ export default {
   data () {
     return {
       textLength: 0,
-      beforeRefresh: null
+      beforeRefresh: null,
+      boxWidth: 0,
+      boxHeight: 0
     }
   },
   computed: {
@@ -72,7 +74,13 @@ export default {
     },
   },
   mounted () {
-    observer.listenTo(this.$refs.box, () => this.refresh())
+    observer.listenTo(this.$refs.box, (el) => {
+      console.log('resize', el.offsetWidth, el.offsetHeight)
+      if (el.offsetWidth == this.boxWidth && el.offsetHeight == this.boxHeight) return
+      this.boxWidth = el.offsetWidth
+      this.boxHeight = el.offsetHeight
+      this.refresh()
+    })
   },
   beforeDestroy () {
     observer.uninstall(this.$refs.box)
@@ -81,10 +89,14 @@ export default {
     refresh () {
       this.beforeRefresh && this.beforeRefresh()
       let stopLoop = false
+      console.time('refresh')
       this.beforeRefresh = () => stopLoop = true
       this.textLength = this.content.length
       const checkLoop = (start, end) => {
-        if (stopLoop || start + 1 >= end) return
+        if (stopLoop || start + 1 >= end) {
+          this.beforeRefresh = null
+          return
+        }
         const boxRect = this.$refs.box.getBoundingClientRect()
         const tailRect = this.$refs.tail.getBoundingClientRect()
         const overflow = tailRect.bottom > boxRect.bottom
@@ -93,7 +105,6 @@ export default {
         this.$nextTick(() => checkLoop(start, end))
       }
       this.$nextTick(() => checkLoop(0, this.textLength))
-
     },
     clickBtn (event) {
       this.$emit('click-btn', event)
@@ -103,18 +114,18 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.ellipsis-container
+.mm-ellipsis-container
   text-align left
   position relative
   line-height 1.5
   .shadow
-    float left
     width 100%
     display flex
     pointer-events none
     opacity 0
     user-select none
     position absolute
+    outline green solid 1px
     textarea
       border none
       flex auto
