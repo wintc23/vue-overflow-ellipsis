@@ -75,7 +75,6 @@ export default {
   },
   mounted () {
     observer.listenTo(this.$refs.box, (el) => {
-      console.log('resize', el.offsetWidth, el.offsetHeight)
       if (el.offsetWidth == this.boxWidth && el.offsetHeight == this.boxHeight) return
       this.boxWidth = el.offsetWidth
       this.boxHeight = el.offsetHeight
@@ -89,7 +88,6 @@ export default {
     refresh () {
       this.beforeRefresh && this.beforeRefresh()
       let stopLoop = false
-      console.time('refresh')
       this.beforeRefresh = () => stopLoop = true
       this.textLength = this.content.length
       const checkLoop = (start, end) => {
