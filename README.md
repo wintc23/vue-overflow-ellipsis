@@ -13,7 +13,7 @@ yarn add vue-overflow-ellipsis
 
 ```js
 import ellipsis from "vue-overflow-ellipsis"
-import "vue-overflow-ellipsis/dist/vue-overflow-ellipsis.css"
+import "vue-overflow-ellipsis/dist/index.css"
 ```
 
 ### 3. 使用组件
